@@ -1,0 +1,35 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "https://example.com/tree",
+	"additionalProperties": false,
+    "type": "object",
+    "requiredProperties": [
+   		"eventSourceIdentifier",
+      	"simpleState"
+    ],
+    "properties": {
+		"eventSourceIdentifier": {
+         	"type": "string"
+        },
+        "simpleState": {
+         	"type": "string",
+            "enum": [
+            	"okay",
+              	"error",
+              	"warning",
+                "pending",
+              	"information",
+              	"unknown"
+            ]
+        },
+        "complexState": {
+        	"type": "string"
+        },
+        "complexMessage": {
+        	"type": "string"
+        },
+        "eventSourceUrl": {
+        	"type": "string"
+        }
+    }
+}

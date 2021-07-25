@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "allowAdditionalProperties": false,
+  "required": [
+    "version",
+    "eventSource",
+    "eventSourceIdentifier",
+    "eventSourceIdentifierHash"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "allowedValues": "19-07-2021"
+    },
+    "eventSource": {
+        "type": "string"
+    },
+    "eventSourceIdentifier": {
+        "type": "string"
+    },
+    "eventSourceIdentifierHash": {
+        "type": "string"
+    },
+    "eventHistory": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "simpleState": {
+                    "type": "string",
+                    "enum": [
+                        "okay",
+                        "error",
+                        "warning",
+                        "pending",
+                        "information",
+                        "unknown"
+                    ]
+                },
+                "complexState": {
+                    "type": "string"
+                },
+                "complexMessage": {
+                    "type": "string"
+                },
+                "eventSourceUrl": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        }
+    }

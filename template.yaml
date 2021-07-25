@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  cidash
+  Sample SAM Template for cidash
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+
+  StoreBucket:
+    Type: "AWS::S3::Bucket"
+
+  StoreBucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref "StoreBucket"
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - "s3:GetObject"
+              - "s3:PutObject"
+            Effect: "Allow"
+            Resource: !Join
+              - ""
+              - - 'arn:aws:s3:::'
+                - !Ref "StoreBucket"
+                - "/private/*"
+            Principal: "*" 
+            # AWS: !GetAtt "CollectorFunction.Arn"
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref "StoreBucket"
+                - "/public/*"
+            Principal: '*'
+              #Condition:
+              #StringLike:
+              #  'aws:Referer':
+              #    - 'http://www.example.com/*'
+              #    - 'http://example.net/*'
+
+  CollectorTable:
+    Type: "AWS::Serverless::SimpleTable"
+    Properties:
+      TableName: "cidash-data"
+      PrimaryKey:
+        Name: "eventSourceIdentifierHash"
+        Type: "String"
+  
+  CollectorFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      CodeUri: "collector/"
+      Handler: "app.lambda_handler"
+      Runtime: "python3.8"
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref "StoreBucket"
+        - S3WritePolicy:
+            BucketName: !Ref "StoreBucket"
+        - DynamoDBCrudPolicy:
+            TableName: "cidash-data"
+      Environment:
+        Variables:
+          STORE_BUCKET: !Ref "StoreBucket"
+          TABLE: "cidash-data"
+      Events:
+        CollectorEvent:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /event/{source}
+            Method: post
+        HookGithub:
+          Type: Api
+          Properties:
+            Path: /hook/{source}
+            Method: post
+        GetData:
+          Type: Api
+          Properties:
+            Path: "/data"
+            Method: get
+
+Outputs:
+  
+  CollectorApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  
+  CollectorFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt CollectorFunction.Arn
+  
+  CollectorFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt CollectorFunctionRole.Arn

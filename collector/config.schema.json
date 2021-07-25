@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "allowAdditionalProperties": false,
+  "required": [
+    "version",
+    "eventSource",
+    "eventResource"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "allowedValues": "19-07-2021"
+    },
+    "accessToken": {
+        "type": "string"
+    },
+    "privateToken": {
+        "type": "string"
+    },
+    "userList": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string"
+                },
+                "hash": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "eventSource": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+            "slug",
+            "displayName"
+        ],
+        "allowAdditionalProperties": false,
+        "properties": {
+            "slug": {
+                "type": "string"
+            },
+            "displayName": {
+                "type": "string"
+            }
+        }
+      }
+    },
+    "eventResource": {
+      "type": "array",
+      "items": {
+        "allowAdditionalProperties": false,
+        "type": "object",
+        "properties": {
+          "eventSource": {
+            "type": "string"
+          },
+          "eventSourceIdentifier": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": false
+          },
+          "config": {
+            "type": "object",
+            "allowAdditionalProperties": false,
+            "default": {
+            },
+            "properties": {
+              "allowMessageInherith": {
+                  "type": "boolean",
+                  "default": false
+              },
+              "maxHistory": {
+                  "type": "integer",
+                  "default": 5
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
