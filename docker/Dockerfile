@@ -12,5 +12,5 @@ FROM nginx
 
 COPY --from=NODEBUILD /app/build /statichtml
 
-COPY ./docker/entrypoint.sh /docker-entrypoint.d/entrypoint.sh
+COPY ./docker/10-cidash.sh /docker-entrypoint.d/10-cidash.sh
 

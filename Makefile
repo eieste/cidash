@@ -4,4 +4,4 @@ REGISTRY ?= "ghcr.io"
 
 
 build-docker:
-	docker build -f docker/Dockerfile -t $(REGISTRY)/$(IMAGE_NAME) .
+	docker build -f docker/Dockerfile --no-cache -t $(REGISTRY)/$(IMAGE_NAME) .
