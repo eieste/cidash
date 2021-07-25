@@ -39,11 +39,11 @@ function App() {
                                     Passwort: <input type="password" onInput={ (evt) => handleInput("password", evt)}/><br/>
                                     <input type="button" value={"Speichern"} onClick={ (evt) => handleSaveCredential(evt)} /> 
                                 </div>
+                            } else {
+                                return <EventDashboard />
                             }
-                        else{
-                            return <EventDashboard />
                         }
-                   })()
+                    )()
                 }
 
             </div>
