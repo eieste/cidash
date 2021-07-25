@@ -15,3 +15,9 @@ COPY --from=NODEBUILD /app/build /statichtml
 COPY ./docker/entrypoint.bash /entrypoint.bash
 
 ENTRYPOINT /entrypoint.bash
+
+EXPOSE 80
+
+STOPSIGNAL SIGQUIT
+
+CMD ["nginx", "-g", "daemon off;"]
