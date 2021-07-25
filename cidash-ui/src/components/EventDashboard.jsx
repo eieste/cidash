@@ -1,27 +1,17 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Group from "./Group";
 import config from "../config.json";
 import {getData} from "../contrib.js";
 import _ from "lodash";
+import {defaultEventData, EventContext, CredentialContext} from "../context";
 
-
-const defaultEventData = {
-    "eventSource": [],
-    "version":"",
-    "eventResource": []
-};
-
-export const EventContext = React.createContext({
-		eventData: defaultEventData, 
-		setEventData: () => {},
-});
 
 function EventDashboard(){
     const [eventData, setEventData] = useState(defaultEventData);
-
+    const { credential } = useContext(CredentialContext)
     useEffect( () => {
-        getData("/data").then( (jsonData) => {
+        getData("/data", {credential}).then( (jsonData) => {
             setEventData(jsonData);
         })
     }, []);

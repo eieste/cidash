@@ -1,17 +1,7 @@
 import EventDashboard from "./components/EventDashboard";
 import './App.css';
 import React, { useState } from "react";
-
-const defaultCredential = {
-    "username": "asdf",
-    "password": "",
-};
-
-export const CredentialContext = React.createContext({ 
-    "credential": defaultCredential,
-    "setCredential": () => {}
-});
-
+import {CredentialContext, defaultCredential} from "./context";
 
 function App() {
     const [credential, setCredential] = useState(defaultCredential);
