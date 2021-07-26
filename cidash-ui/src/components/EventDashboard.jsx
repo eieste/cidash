@@ -9,24 +9,30 @@ import {defaultEventData, EventContext, CredentialContext} from "../context";
 function EventDashboard(){
     const [eventData, setEventData] = useState(defaultEventData);
     const { credential } = useContext(CredentialContext);
+    const [percent, setPercent] = useState(100);
+
 
     useEffect( () => {
-        getData("/data", {credential}).then( (jsonData) => {
-            setEventData(jsonData);
-        });
+        if(percent >= 99){
+            getData("/data", {credential}).then( (jsonData) => {
+                setEventData(jsonData);
+            });
+        }
+    }, []);
 
+    useEffect(() => {
+        let stepSize = 100;
         let i = 0;
         const interval = setInterval(function(){
-            i++;
-            let percent = i/config.refreshInterval*100;
-            if(percent => 99){
-                getData("/data", {credential}).then( (jsonData) => {
-                    setEventData(jsonData);
-                    i = 0;
-                });
+            i = i + stepSize;
+            let percent = (i/config.refreshInterval)*100;
+            if(percent >= 99) {
+                percent = 0
             }
-        }, 100);
-    }, []);
+            setPercent(percent);
+        }, stepSize);
+        return () => clearInterval(interval);
+    }, [eventData])
 
     return (
         <EventContext.Provider value={{eventData, setEventData}} >
@@ -36,7 +42,6 @@ function EventDashboard(){
                         () => {
                             let groupList = [];
                             _.forEach(eventData.eventSource, function(eventSource) {
-                            console.log(eventSource);
                                 let groupEvents = _.filter(eventData.eventResource, (item) => { return item.eventSource === eventSource["slug"] });
                                 groupList.push( <Group displayName={eventSource.displayName} slug={eventSource.slug} events={groupEvents} /> );   
                             })
