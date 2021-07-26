@@ -117,6 +117,17 @@ Resources:
             #  Authorizer: "UserAuthorizer"
             #   ApiKeyRequired: false
 
+  CollectorFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt CollectorFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: sns.amazonaws.com 
+      #SourceAccount: !Ref 'AWS::AccountId'
+      #SourceArn: !GetAtt bucket.Arn
+
+
+
   CiDashTopic:
     Type: "AWS::SNS::Topic"
     Properties:

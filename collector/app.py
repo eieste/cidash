@@ -6,7 +6,7 @@ from boto3.dynamodb.conditions import Key
 import functools
 import os
 import hashlib
-from exceptions import InvalidVersion, ValidationError, UnautorizedAccess
+from exceptions import InvalidVersion, ValidationError, UnauthorizedAccess
 from datetime import datetime, timezone
 import re
 import base64
@@ -82,15 +82,17 @@ def check_user_auth(lambda_event):
     auth_header = lambda_event.get("headers", {}).get("Authorization", ":")[6:]
     credentials = [item.strip() for item in base64.b64decode(auth_header).decode("utf-8").split(":")]
     config = get_config()
-    pwhash = hashlib.sha512(str(credentials[1]+config.get("privateToken")).encode("utf-8"))
+    pwhash = hashlib.sha512(str(credentials[1]+config.get("privateToken")).encode("utf-8")).hexdigest()
+    print(pwhash)
     for user in config.get("userList", []):
         if user.get("username") == credentials[0] and \
                 user.get("password") == pwhash:
                     return True
-    raise UnautorizedAccess("You are not allowed to access")
+    raise UnauthorizedAccess("You are not allowed to access")
 
 
 def general_handler(lambda_event, lambda_context):
+    print(lambda_event)
     if lambda_event.get("httpMethod", "").lower() in ["options", "head"]:
         return wrap_response({})
 
@@ -107,20 +109,22 @@ def general_handler(lambda_event, lambda_context):
 
     if lambda_event.get("resource") == '/event/{source}':
         check_hook_auth(lambda_event)
+        source = lambda_event.get("pathParameters", {}).get("source", "")
         return event_post(lambda_event, lambda_context)
 
     if lambda_event.get("resource") == '/hook/{source}':
+        source = lambda_event.get("pathParameters", {}).get("source", "")
         check_hook_auth(lambda_event)
         if source == "aws-sns-cfn":
             return wrap_response(hook_handle_sns_cfn(json.loads(lambda_event.get("body"))))
         if source == "github":
-            return wrap__response(hook_handle_github(json.loads(lambda_event.get("body"))))
-
-
+            return wrap_response(hook_handle_github(json.loads(lambda_event.get("body"))))
 
     if lambda_event.get("resource") == "/data":
         check_user_auth(lambda_event)
         return wrap_response(get_event_data())
+    print("NOTHING HAPPED")
+
 
 def get_event_data():
     table = dd.Table(os.environ.get("TABLE"))
@@ -132,7 +136,7 @@ def get_event_data():
                 'Keys': [ {"eventSourceIdentifierHash": md5(event.get("eventSourceIdentifier")) } for event in config.get("eventResource") ],
                 'ConsistentRead': True
             }
-        },
+        }
     )
 
     response_data = {
@@ -140,6 +144,7 @@ def get_event_data():
         "eventSource": config.get("eventSource"),
         "eventResource": []
     }
+    print(response_dd)
     for resource in response_dd.get("Responses").get(os.environ.get("TABLE")):
         event_config = find_event_config(resource, resource.get("eventSource"))
         data_config = event_config.copy()
@@ -152,9 +157,7 @@ def get_event_data():
 
 def hook_handle_github(body):
     state = "unknown"
-
-
-
+    action = {}
     if "check_run" in body:
         action = body.get("check_run", {})
     elif "check_suite" in body:

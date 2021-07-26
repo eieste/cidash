@@ -6,5 +6,5 @@ class ValidationError(ValueError):
     pass
 
 
-class UnautorizedAccess(PermissionError):
+class UnauthorizedAccess(PermissionError):
     pass

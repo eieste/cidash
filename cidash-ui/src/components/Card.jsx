@@ -2,6 +2,11 @@ import React from "react";
 import styles from "./Card.module.css";
 
 function Card({ simpleState, complexState, complexMessage, displayName, eventSourceUrl, config, eventHistory, timestamp }){
+
+    if(simpleState == "pending"){
+        simpleState = "information";
+    }
+
     return (
         <> 
             <div className={[styles.card, styles["state-"+simpleState]].join(" ")}>
