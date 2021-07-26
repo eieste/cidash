@@ -71,7 +71,6 @@ def lambda_handler(lambda_event, lambda_context):
         }, status_code=500)
 
 def check_hook_auth(lambda_event):
-    return True
     config = get_config()
     if lambda_event.get("queryStringParameters").get("key") == config.get("accessToken"):
         return True
@@ -79,7 +78,6 @@ def check_hook_auth(lambda_event):
 
 
 def check_user_auth(lambda_event):
-    return True
     log.debug(lambda_event)
     auth_header = lambda_event.get("headers", {}).get("Authorization", ":")
     credentials = [item.strip() for item in auth_header[6:].split(":")]
@@ -115,6 +113,10 @@ def general_handler(lambda_event, lambda_context):
         check_hook_auth(lambda_event)
         if source == "aws-sns-cfn":
             return wrap_response(hook_handle_sns_cfn(json.loads(lambda_event.get("body"))))
+        if source == "github":
+            return wrap__response(hook_handle_github(json.loads(lambda_event.get("body"))))
+
+
 
     if lambda_event.get("resource") == "/data":
         check_user_auth(lambda_event)
@@ -146,6 +148,43 @@ def get_event_data():
             data_config
         )
     return response_data
+
+
+def hook_handle_github(body):
+    state = "unknown"
+
+
+
+    if "check_run" in body:
+        action = body.get("check_run", {})
+    elif "check_suite" in body:
+        action = body.get("check_suite", {})
+
+    if action.get("check_run", {}).get("conclusion", {}) is None:
+        state = action.get("status")
+    else:
+        state = action.get("conclusion", {})
+
+
+    save_event({
+        "eventSourceIdentifier": body.get("repository", {}).get("full_name", ""),
+        "simpleState": resolve_github_state(state),
+        "complexState": action.get("output", {}).get("title", ""),
+        "complexMessage": action.get("output", {}).get("summary", ""),
+        "eventResourceUrl": action.get("url", "")
+    }, "github")
+
+
+
+
+def resolve_github_state(state):
+
+    if state.lower() in ["success", "completed"]:
+        return "okay"
+    elif state.lower() in ["queue"]:
+        return "pending"
+    elif state.lower() in ["failure"]:
+        return "error"
 
 
 def resolve_sns_cfn_state(state):
