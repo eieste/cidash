@@ -1,4 +1,5 @@
 {
     "api_endpoint_url": "%%API_ENDPOINT_URL%%",
-    "version": "19-07-2021"
+    "version": "19-07-2021",
+    "refreshInterval": 5000 
 }

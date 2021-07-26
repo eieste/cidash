@@ -1,0 +1,29 @@
+
+
+Parameters:
+
+  SubscriptionType:
+    Type: "String"
+    Description: "how should cidash be linked?"
+    AllowedValues:
+      - "lambda"
+      - "https"
+  
+  TopicArn:
+    Type: "String"
+    Description: "ARN of topic which should be Subscribed"
+
+  CiDashEndpoint:
+    Type: "String"
+    Default: ""
+    Description: "Arn of Lambda if SubscriptionType is lambda or http url if SubscriptionType is https"
+
+
+Resources:
+
+  CiDashSubscription:
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Protocol: !Ref "SubscriptionType"
+      Endpoint: !GetAtt "CiDashEndpoint"
+      TopicArn: !Ref "TopicArn"
