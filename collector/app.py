@@ -9,7 +9,7 @@ import hashlib
 from exceptions import InvalidVersion, ValidationError, UnautorizedAccess
 from datetime import datetime, timezone
 import re
-
+import base64
 
 log = logging.getLogger(__name__)
 s3 = boto3.client("s3")
@@ -79,11 +79,11 @@ def check_hook_auth(lambda_event):
 
 def check_user_auth(lambda_event):
     log.debug(lambda_event)
-    auth_header = lambda_event.get("headers", {}).get("Authorization", ":")
-    credentials = [item.strip() for item in auth_header[6:].split(":")]
+    auth_header = lambda_event.get("headers", {}).get("Authorization", ":")[6:]
+    credentials = [item.strip() for item in base64.b64decode(auth_header).decode("utf-8").split(":")]
     config = get_config()
-    pwhash = hashlib.sha512(credentials[1]+config.get("privateToken"))
-    for user in config.get("users"):
+    pwhash = hashlib.sha512(str(credentials[1]+config.get("privateToken")).encode("utf-8"))
+    for user in config.get("userList", []):
         if user.get("username") == credentials[0] and \
                 user.get("password") == pwhash:
                     return True
@@ -91,7 +91,7 @@ def check_user_auth(lambda_event):
 
 
 def general_handler(lambda_event, lambda_context):
-    if lambda_event("httpMethod", "").lower() in ["options", "head"]:
+    if lambda_event.get("httpMethod", "").lower() in ["options", "head"]:
         return wrap_response({})
 
     if lambda_event.get("Records", False):

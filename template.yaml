@@ -116,8 +116,46 @@ Resources:
             #Auth:
             #  Authorizer: "UserAuthorizer"
             #   ApiKeyRequired: false
+
+  CiDashTopic:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      TopicName: "cidash"
+      DisplayName: "cloudformation deployment Notifications" 
+
+  CiDashTopicPolicy:
+    Type: "AWS::SNS::TopicPolicy"
+    Properties:
+      Topics:
+        - !Ref "CiDashTopic"
+      PolicyDocument:
+        Statement:
+          - Sid: "OwnAccount"
+            Action:
+              - "sns:Publish"
+            Effect: "Allow"
+            Resource: "*"
+            Principal:
+              Service:
+                - "cloudformation.amazonaws.com"
+                - "budgets.amazonaws.com"
+
+  CiDashSubscription:
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Protocol: "lambda"
+      Endpoint: !GetAtt "CollectorFunction.Arn"
+      TopicArn: !Ref "CiDashTopic"
+
+
 Outputs:
-  
+ 
+  CiDashTopic:
+    Value: !Ref "CiDashTopic"
+    Export:
+      Name:
+        !Join [":", [ !Ref "AWS::StackName", "CiDashTopicArn"]]
+
   CollectorApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${CollectorApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
