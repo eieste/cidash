@@ -6,6 +6,6 @@ codeuri = "/home/seiermann/code/private/cidash/collector"
 runtime = "python3.8"
 source_md5 = ""
 packagetype = "Zip"
-functions = ["CollectorFunction"]
+functions = ["CollectorAuthorizerFunction", "CollectorFunction"]
 
 [layer_build_definitions]

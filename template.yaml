@@ -54,7 +54,28 @@ Resources:
       PrimaryKey:
         Name: "eventSourceIdentifierHash"
         Type: "String"
-  
+ 
+
+  CollectorApi:
+    Type: "AWS::Serverless::Api"
+    Properties:
+      Cors:
+          AllowHeaders: "'*'" 
+          AllowMethods: "'OPTIONS,POST,GET'"
+          AllowOrigin: "'*'"
+      StageName: "Prod"
+      #Auth:
+      #  Authorizers:
+      #    UserAuthorizer:
+      #      FunctionArn: !GetAtt "CollectorAuthorizerFunction.Arn"
+
+  CollectorAuthorizerFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      CodeUri: "collector/"
+      Handler: "authorizer.check_user_auth"
+      Runtime: "python3.8"
+
   CollectorFunction:
     Type: "AWS::Serverless::Function"
     Properties:
@@ -68,6 +89,7 @@ Resources:
             BucketName: !Ref "StoreBucket"
         - DynamoDBCrudPolicy:
             TableName: "cidash-data"
+      EventInvokeConfig:
       Environment:
         Variables:
           STORE_BUCKET: !Ref "StoreBucket"
@@ -76,24 +98,29 @@ Resources:
         CollectorEvent:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
+            RestApiId: !Ref "CollectorApi"
             Path: /event/{source}
             Method: post
         HookGithub:
           Type: Api
           Properties:
+            RestApiId: !Ref "CollectorApi"
             Path: /hook/{source}
             Method: post
         GetData:
           Type: Api
           Properties:
+            RestApiId: !Ref "CollectorApi"
             Path: "/data"
             Method: get
-
+            #Auth:
+            #  Authorizer: "UserAuthorizer"
+            #   ApiKeyRequired: false
 Outputs:
   
   CollectorApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+    Value: !Sub "https://${CollectorApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
   
   CollectorFunction:
     Description: "Hello World Lambda Function ARN"
