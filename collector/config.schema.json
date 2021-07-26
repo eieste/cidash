@@ -81,7 +81,7 @@
               },
               "maxHistory": {
                   "type": "integer",
-                  "default": 5
+                  "default": 15
               }
             }
           }

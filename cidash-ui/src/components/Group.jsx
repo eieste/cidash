@@ -20,12 +20,20 @@ function Group({displayName, slug, events}){
                             {
                                 ( 
                                 () => {
-                                    return _.map(events, function(event_resource){
-                                        let event = _.maxBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); });
+                                    return _.map(_.sortBy(events, (item) => item.displayName), function(event_resource){
+                                        let sortedEvent = _.sortBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); });
+                                        let complexMessage = sortedEvent[0].complexMessage
+                                        _.forEach(sortedEvent, (item) => {
+                                            if(complexMessage == "" || complexMessage == null || complexMessage == "null"){
+                                                complexMessage = item.complexMessage;
+                                            }
+                                        });
+
+                                        let event = sortedEvent[0]; // _.maxBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); });
                                         return (
                                             <Card simpleState={event.simpleState}
                                                   complexState={event.complexState}
-                                                  complexMessage={event.complexMessage} 
+                                                  complexMessage={complexMessage} 
                                                   eventSourceUrl={event.eventSourceUrl}
                                                   displayName={event_resource.displayName}
                                                   timestamp={new Date(event.timestamp)}

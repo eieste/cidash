@@ -9,11 +9,11 @@ import {defaultEventData, EventContext, CredentialContext} from "../context";
 function EventDashboard(){
     const [eventData, setEventData] = useState(defaultEventData);
     const { credential } = useContext(CredentialContext);
-    const [percent, setPercent] = useState(100);
+    const [ percent, setPercent ] = useState(100);
     const [ timeInterval, setTimeInterval] = useState(0);
 
     useEffect( () => {
-        let stepSize = 100;
+        let stepSize = 5000;
         const interval = setInterval(() => {
             setTimeInterval(timeInterval => timeInterval + stepSize );
         }, stepSize);
@@ -22,7 +22,6 @@ function EventDashboard(){
 
     useEffect(() => {
         let percent = ( timeInterval / config.refreshInterval ) * 100;
-        console.log(percent);
         if(percent >= 99) {
             percent = 0
             getData("/data", {credential}).then( (jsonData) => {
@@ -42,9 +41,9 @@ function EventDashboard(){
                             let groupList = [];
                             _.forEach(eventData.eventSource, function(eventSource) {
                                 let groupEvents = _.filter(eventData.eventResource, (item) => { return item.eventSource === eventSource["slug"] });
-                                groupList.push( <Group displayName={eventSource.displayName} slug={eventSource.slug} events={groupEvents} /> );   
+                                groupList.push([ groupEvents.length,  <Group displayName={eventSource.displayName} slug={eventSource.slug} events={groupEvents} /> ]);   
                             })
-                            return groupList;
+                            return _.map(_.sortBy(groupList, (item) => item[0]), (item) => item[1]).reverse() ;
                         }
 
                     )()

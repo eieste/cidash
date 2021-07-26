@@ -10,6 +10,7 @@ from exceptions import InvalidVersion, ValidationError, UnauthorizedAccess
 from datetime import datetime, timezone
 import re
 import base64
+import urllib
 
 log = logging.getLogger(__name__)
 s3 = boto3.client("s3")
@@ -21,6 +22,7 @@ def extend_with_default(validator_class):
     validate_properties = validator_class.VALIDATORS["properties"]
 
     def set_defaults(validator, properties, instance, schema):
+
         for property, subschema in properties.items():
             if "default" in subschema:
                 instance.setdefault(property, subschema["default"])
@@ -83,7 +85,6 @@ def check_user_auth(lambda_event):
     credentials = [item.strip() for item in base64.b64decode(auth_header).decode("utf-8").split(":")]
     config = get_config()
     pwhash = hashlib.sha512(str(credentials[1]+config.get("privateToken")).encode("utf-8")).hexdigest()
-    print(pwhash)
     for user in config.get("userList", []):
         if user.get("username") == credentials[0] and \
                 user.get("password") == pwhash:
@@ -144,7 +145,6 @@ def get_event_data():
         "eventSource": config.get("eventSource"),
         "eventResource": []
     }
-    print(response_dd)
     for resource in response_dd.get("Responses").get(os.environ.get("TABLE")):
         event_config = find_event_config(resource, resource.get("eventSource"))
         data_config = event_config.copy()
@@ -158,23 +158,18 @@ def get_event_data():
 def hook_handle_github(body):
     state = "unknown"
     action = {}
-    if "check_run" in body:
-        action = body.get("check_run", {})
-    elif "check_suite" in body:
-        action = body.get("check_suite", {})
 
-    if action.get("check_run", {}).get("conclusion", {}) is None:
-        state = action.get("status")
-    else:
-        state = action.get("conclusion", {})
 
+    check_run = body.get("check_run", {})
+    state = check_run.get("conclusion", "")
+    url = check_run.get("check_suite", {}).get("url", "")
 
     save_event({
         "eventSourceIdentifier": body.get("repository", {}).get("full_name", ""),
         "simpleState": resolve_github_state(state),
-        "complexState": action.get("output", {}).get("title", ""),
-        "complexMessage": action.get("output", {}).get("summary", ""),
-        "eventResourceUrl": action.get("url", "")
+        "complexState": check_run.get("output", {}).get("title", ""),
+        "complexMessage": check_run.get("output", {}).get("title", ""),
+        "eventSourceUrl": url
     }, "github")
 
 
@@ -188,7 +183,7 @@ def resolve_github_state(state):
         return "pending"
     elif state.lower() in ["failure"]:
         return "error"
-
+    return "unknown"
 
 def resolve_sns_cfn_state(state):
 
@@ -229,6 +224,7 @@ def hook_handle_sns_cfn(cfn_msg):
         "simpleState": resolve_sns_cfn_state(cfn_msg.get("ResourceStatus")),
         "complexState": cfn_msg.get("ResourceStatus"),
         "complexMessage": cfn_msg.get("ResourceStatusReason"),
+        "eventSourceUrl": "https://eu-central-1.console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/stackinfo?stackId={}".format(urllib.parse.quote(cfn_msg.get("StackId")))
     }, "aws-sns-cfn")
 
 

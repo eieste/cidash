@@ -41,6 +41,7 @@ box-shadow: 0px 0px 23px 5px rgba(0,0,0,0.7);
   padding: 15px;
   grid-template-columns: 1fr 1fr;
   grid-row-gap: 15px;
+  white-space: nowrap;
 }
 
 .cardSeperator {
@@ -57,4 +58,12 @@ box-shadow: 0px 0px 23px 5px rgba(0,0,0,0.7);
     cursor: pointer;
     display: inline;
     position: absolute;
+}
+
+
+.link {
+    color: blue;
+    text-decoration: unterline;
+    cursor: pointer;
+
 }
