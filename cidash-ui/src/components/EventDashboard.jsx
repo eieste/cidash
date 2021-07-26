@@ -10,29 +10,28 @@ function EventDashboard(){
     const [eventData, setEventData] = useState(defaultEventData);
     const { credential } = useContext(CredentialContext);
     const [percent, setPercent] = useState(100);
-
+    const [ timeInterval, setTimeInterval] = useState(0);
 
     useEffect( () => {
-        if(percent >= 99){
+        let stepSize = 100;
+        const interval = setInterval(() => {
+            setTimeInterval(timeInterval => timeInterval + stepSize );
+        }, stepSize);
+        return () => clearInterval(interval);
+    });
+
+    useEffect(() => {
+        let percent = ( timeInterval / config.refreshInterval ) * 100;
+        console.log(percent);
+        if(percent >= 99) {
+            percent = 0
             getData("/data", {credential}).then( (jsonData) => {
                 setEventData(jsonData);
             });
+            setTimeInterval(0);
         }
-    }, []);
-
-    useEffect(() => {
-        let stepSize = 100;
-        let i = 0;
-        const interval = setInterval(function(){
-            i = i + stepSize;
-            let percent = (i/config.refreshInterval)*100;
-            if(percent >= 99) {
-                percent = 0
-            }
-            setPercent(percent);
-        }, stepSize);
-        return () => clearInterval(interval);
-    }, [eventData])
+        setPercent( percent );
+    }, [timeInterval])
 
     return (
         <EventContext.Provider value={{eventData, setEventData}} >
