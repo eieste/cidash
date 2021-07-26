@@ -2,9 +2,17 @@ import EventDashboard from "./components/EventDashboard";
 import './App.css';
 import React, { useState } from "react";
 import {CredentialContext, defaultCredential} from "./context";
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 function App() {
-    const [credential, setCredential] = useState(defaultCredential);
+    let initialCredential = defaultCredential;
+    let credential_cookie = cookies.get("cidash_credential");
+    if(credential_cookie){
+        initialCredential = credential_cookie;
+    }
+    const [credential, setCredential] = useState(initialCredential);
     const [credentialInput, setCredentialInput] = useState({"username": "", "password": ""});
 
     function handleInput(name, event){
@@ -14,6 +22,7 @@ function App() {
 
     function handleSaveCredential(){
         setCredential(credentialInput);
+        cookies.set('cidash_credential', JSON.stringify(credentialInput), {path: '/'});
     }
 
     return (

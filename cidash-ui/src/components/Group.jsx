@@ -34,8 +34,7 @@ function Group({displayName, slug, events}){
 
                 .group-no-events {
                     width: 100%;
-                    margin: 20px;
-                    padding: 50px;
+                    margin: 50px;
                     font-size: 30px;
                     text-align: center;
                 }

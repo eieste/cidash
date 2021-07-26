@@ -57,12 +57,13 @@ box-shadow: 0px 0px 23px 5px rgba(0,0,0,0.7);
                   left: 0px;
                 }
 
-/*
                 .simpleState {
-                    font-size: 20px;
+                    font-size: 30px;
                     font-weight: bold;
                     cursor: pointer;
-                }*/
+                    display: inline;
+                    position: absolute;
+                }
 
             `}</style>
             <div className={"card state-"+simpleState}>

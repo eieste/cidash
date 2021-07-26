@@ -6,15 +6,28 @@ import {getData} from "../contrib.js";
 import _ from "lodash";
 import {defaultEventData, EventContext, CredentialContext} from "../context";
 
-
 function EventDashboard(){
     const [eventData, setEventData] = useState(defaultEventData);
-    const { credential } = useContext(CredentialContext)
+    const { credential } = useContext(CredentialContext);
+
     useEffect( () => {
         getData("/data", {credential}).then( (jsonData) => {
             setEventData(jsonData);
-        })
+        });
+
+        let i = 0;
+        const interval = setInterval(function(){
+            i++;
+            let percent = i/config.refreshInterval*100;
+            if(percent => 99){
+                getData("/data", {credential}).then( (jsonData) => {
+                    setEventData(jsonData);
+                    i = 0;
+                });
+            }
+        }, 100);
     }, []);
+
     return (
         <EventContext.Provider value={{eventData, setEventData}} >
             <div>
