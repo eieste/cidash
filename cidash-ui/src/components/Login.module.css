@@ -1,0 +1,69 @@
+.login {
+  padding: 15px;
+  width: 400px;
+  min-height: 400px;
+  margin: 2% auto 0 auto;
+}
+.login .heading {
+  text-align: center;
+  margin-top: 1%;
+}
+.login .headingH2 {
+  font-size: 3em;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.7);
+  display: inline-block;
+  padding-bottom: 5px;
+  text-shadow: 1px 1px 3px #23203b;
+}
+.input-group {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.input-group:last-of-type {
+  border-top: none;
+}
+.input-group-span {
+  background: transparent;
+  min-width: 53px;
+  border: none;
+}
+.login form .input-group span i {
+  font-size: 1.5em;
+  color: rgba(255, 255, 255, 0.2);
+}
+.login form input.form-control {
+  display: block;
+  width: auto;
+  height: auto;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: none;
+  border-radius: 0px;
+  padding: 10px;
+  font-size: 1.6em;
+  width: 100%;
+  background: transparent;
+  color: #c2b8b1;
+}
+.form-control:focus {
+  border: none;
+}
+.submitButton {
+  margin-top: 20px;
+  background: #27AE60;
+  border: none;
+  font-size: 1.6em;
+  font-weight: 300;
+  padding: 5px 0;
+  width: 100%;
+  border-radius: 3px;
+  color: #b3eecc;
+  border-bottom: 4px solid #1e8449;
+}
+.submitButton:hover {
+  background: tint(#27AE60, 4%);
+  -webkit-animation: hop 1s;
+  animation: hop 1s;
+}

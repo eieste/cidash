@@ -23,11 +23,13 @@ function Group({displayName, slug, events}){
                                     return _.map(_.sortBy(events, (item) => item.displayName), function(event_resource){
                                         let sortedEvent = _.sortBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); });
                                         let complexMessage = sortedEvent[0].complexMessage
-                                        _.forEach(sortedEvent, (item) => {
-                                            if(complexMessage == "" || complexMessage == null || complexMessage == "null"){
-                                                complexMessage = item.complexMessage;
-                                            }
-                                        });
+                                        if(event_resource.config.allowMessageInherith){
+                                            _.forEach(sortedEvent, (item) => {
+                                                if(complexMessage == "" || complexMessage == null || complexMessage == "null"){
+                                                    complexMessage = item.complexMessage;
+                                                }
+                                            });
+                                        }
 
                                         let event = sortedEvent[0]; // _.maxBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); });
                                         return (

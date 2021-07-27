@@ -125,7 +125,6 @@ function Card({ simpleState, complexState, complexMessage, displayName, eventSou
                             () =>{
 
                                 return _.map(eventHistory, (event) => {
-                                    console.log(eventHistory);
                                     return (<tr>
                                         <td>
                                             {event.complexState}

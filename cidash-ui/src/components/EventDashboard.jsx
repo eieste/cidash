@@ -10,7 +10,7 @@ function EventDashboard(){
     const [eventData, setEventData] = useState(defaultEventData);
     const { credential } = useContext(CredentialContext);
     const [ percent, setPercent ] = useState(100);
-    const [ timeInterval, setTimeInterval] = useState(0);
+    const [ timeInterval, setTimeInterval] = useState(config.refreshInterval);
 
     useEffect( () => {
         let stepSize = 5000;

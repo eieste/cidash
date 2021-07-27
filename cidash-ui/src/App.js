@@ -3,7 +3,7 @@ import './App.css';
 import React, { useState } from "react";
 import {CredentialContext, defaultCredential} from "./context";
 import Cookies from 'universal-cookie';
-
+import Login from "./components/Login";
 const cookies = new Cookies();
 
 function App() {
@@ -13,17 +13,6 @@ function App() {
         initialCredential = credential_cookie;
     }
     const [credential, setCredential] = useState(initialCredential);
-    const [credentialInput, setCredentialInput] = useState({"username": "", "password": ""});
-
-    function handleInput(name, event){
-        credentialInput[name] = event.target.value;
-        setCredentialInput(credentialInput);
-    }
-
-    function handleSaveCredential(){
-        setCredential(credentialInput);
-        cookies.set('cidash_credential', JSON.stringify(credentialInput), {path: '/'});
-    }
 
     return (
         <CredentialContext.Provider value={{credential, setCredential}}>
@@ -33,11 +22,7 @@ function App() {
                     (
                         () => {
                             if(credential.username == "" || credential.password == "" || credential.username == false || credential.password == false) {
-                                return <div>
-                                    Username: <input type="text" onInput={ (evt) => handleInput("username", evt)} /><br/>
-                                    Passwort: <input type="password" onInput={ (evt) => handleInput("password", evt)}/><br/>
-                                    <input type="button" value={"Speichern"} onClick={ (evt) => handleSaveCredential(evt)} /> 
-                                </div>
+                                return <Login />
                             } else {
                                 return <EventDashboard />
                             }
