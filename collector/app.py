@@ -158,7 +158,13 @@ def get_event_data():
 def hook_handle_github(body):
     state = "unknown"
     action = {}
-
+    if "check_suite" in body:
+        return {
+            "state": "okay",
+            "messages": [
+                {"title": "nothing to do", "message": "useless github request"}
+            ]
+        }
 
     check_run = body.get("check_run", {})
     state = check_run.get("conclusion", "")
@@ -181,7 +187,7 @@ def resolve_github_state(state):
         return "okay"
     elif state.lower() in ["queue"]:
         return "pending"
-    elif state.lower() in ["failure"]:
+    elif state.lower() in ["failure", "startup_failure"]:
         return "error"
     return "unknown"
 
@@ -240,13 +246,13 @@ def event_post(lambda_event, lambda_context):
         log.exception(e)
         return wrap_response({
                 "state": "error",
-                "errors": [
+                "messages": [
                     {"title": e.__class__.__name__, "message": str(e)}
                 ]
         }, status_code=500)
 
     return wrap_response({
-            "state": "ok"
+            "state": "okay"
         })
 
 def validate_event(event, event_source):
