@@ -178,3 +178,8 @@ Outputs:
   CollectorFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt CollectorFunctionRole.Arn
+
+  cidashTopicArn:
+    Value: !Ref "CiDashTopic"
+    Export:
+      Name: "cidashTopicArn"

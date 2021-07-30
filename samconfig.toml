@@ -3,7 +3,7 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "cidash"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-g6pvs7jtqbaq"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-a8in86wywmxh"
 s3_prefix = "cidash"
 region = "eu-central-1"
 confirm_changeset = true

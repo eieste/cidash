@@ -12,6 +12,7 @@ Parameters:
   TopicArn:
     Type: "String"
     Description: "ARN of topic which should be Subscribed"
+    Default: "FALSE"
 
   CiDashEndpoint:
     Type: "String"
@@ -19,11 +20,41 @@ Parameters:
     Description: "Arn of Lambda if SubscriptionType is lambda or http url if SubscriptionType is https"
 
 
+Conditions:
+
+  AutomaticTopic:
+    Fn::Equals:
+      - "FALSE"
+      - !Ref "TopicArn"
+
 Resources:
 
   CiDashSubscription:
     Type: "AWS::SNS::Subscription"
     Properties:
       Protocol: !Ref "SubscriptionType"
-      Endpoint: !GetAtt "CiDashEndpoint"
-      TopicArn: !Ref "TopicArn"
+      Endpoint: !Ref "CiDashEndpoint"
+      TopicArn:
+        Fn::If:
+          - "AutomaticTopic"
+          - !Ref "CiDashTopic"
+          - !Ref "TopicArn"
+
+  CiDashTopic:
+    Condition: "AutomaticTopic"
+    Type: "AWS::SNS::Topic"
+    Properties:
+      # TopicName: "cidash"
+      DisplayName: "CiDash Topic"
+
+Outputs:
+
+  CiDashTopic:
+    Value:
+      Fn::If:
+        - "AutomaticTopic"
+        - !Ref "CiDashTopic"
+        - !Ref "TopicArn"
+    Export:
+      Name: "cidashTopicArn"
+
