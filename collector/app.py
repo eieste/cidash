@@ -280,6 +280,7 @@ def save_event(origin_event, event_source):
     iso_now = current_time.isoformat(timespec="seconds")
     event_config = find_event_config(origin_event, event_source)
 
+    print(event_source)
     if not event_config:
        raise ValidationError("Unknown Event Source")
 
