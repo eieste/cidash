@@ -21,7 +21,7 @@ function Group({displayName, slug, events}){
                                 ( 
                                 () => {
                                     return _.map(_.sortBy(events, (item) => item.displayName), function(event_resource){
-                                        let sortedEvent = _.sortBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); });
+                                        let sortedEvent = _.sortBy(event_resource.eventHistory, function(o) { return Date.parse(o.timestamp); }).reverse();
                                         let complexMessage = sortedEvent[0].complexMessage
                                         if(event_resource.config.allowMessageInherith){
                                             _.forEach(sortedEvent, (item) => {
