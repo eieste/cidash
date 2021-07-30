@@ -43,10 +43,10 @@ def get_config():
     response = s3.get_object(
             Bucket=os.environ.get("STORE_BUCKET"),
             Key="config.json")
-    #config_data = json.load(response.get("Body"))
+    config_data = json.load(response.get("Body"))
 
-    with open("./config.json", "r") as fobj:
-        config_data = json.load(fobj)
+    #with open("./config.json", "r") as fobj:
+    #    config_data = json.load(fobj)
 
     if datetime.strptime(config_data.get("version"), '%d-%m-%Y') >= datetime.strptime(MIN_EQ_VERSION, '%d-%m-%Y'):
         with open("./config.schema.json", "r") as fobj:
@@ -168,7 +168,7 @@ def hook_handle_github(body):
 
     check_run = body.get("check_run", {})
     state = check_run.get("conclusion", "")
-    url = check_run.get("check_suite", {}).get("url", "")
+    url = check_run.get("details_url", "")
 
     save_event({
         "eventSourceIdentifier": body.get("repository", {}).get("full_name", ""),
