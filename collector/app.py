@@ -43,10 +43,10 @@ def get_config():
     response = s3.get_object(
             Bucket=os.environ.get("STORE_BUCKET"),
             Key="config.json")
-    #config_data = json.load(response.get("Body"))
+    config_data = json.load(response.get("Body"))
 
-    with open("./config.json", "r") as fobj:
-        config_data = json.load(fobj)
+    #with open("./config.json", "r") as fobj:
+    #    config_data = json.load(fobj)
 
     if datetime.strptime(config_data.get("version"), '%d-%m-%Y') >= datetime.strptime(MIN_EQ_VERSION, '%d-%m-%Y'):
         with open("./config.schema.json", "r") as fobj:
