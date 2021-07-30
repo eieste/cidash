@@ -168,7 +168,7 @@ def hook_handle_github(body):
 
     check_run = body.get("check_run", {})
     state = check_run.get("conclusion", "")
-    url = check_run.get("check_suite", {}).get("url", "")
+    url = check_run.get("details_url", "")
 
     save_event({
         "eventSourceIdentifier": body.get("repository", {}).get("full_name", ""),
