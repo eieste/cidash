@@ -245,3 +245,6 @@ $RECYCLE.BIN/
 
 collector/config.json
 node_modules
+
+
+cidash-ui/src/localconfig.json

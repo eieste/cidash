@@ -1,0 +1,26 @@
+.versionCard{
+    border: 2px solid white;
+    padding: 5px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all .1s ease-in-out;
+    color: white;
+    text-decoration: none;
+}
+
+.versionCard:hover{
+    transform: scale(1.05);
+}
+
+.versionTag {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.versionSeperator {
+    width: 50%;
+    height: 1px;
+    background-color: white;
+    padding: 0;
+    margin: 5px auto; 
+}

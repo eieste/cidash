@@ -9,30 +9,47 @@
   "properties": {
     "version": {
       "type": "string",
-      "allowedValues": "19-07-2021"
+      "allowedValues": "19-07-2021",
+      "description": "Version of config-File. It only changes on breaking changes"
     },
     "accessToken": {
-        "type": "string"
+        "type": "string",
+        "description": "This token will be used on every public Webhook"
     },
     "privateToken": {
-        "type": "string"
+        "type": "string",
+        "description": "This token will be used for Password hashing"
     },
     "userList": {
         "type": "array",
+        "description": "list of users that are authorized to access cidash api",
         "items": {
             "type": "object",
             "properties": {
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "A unique username"
                 },
                 "hash": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Hash of password. To create this hash use the following pseudocode: sha512($userPassword+$privateToken)"
                 }
             }
         }
     },
     "eventSource": {
       "type": "array",
+      "description": "List all allowed event Sources",
+      "example": [
+        {
+            "slug": "github",
+            "displayName": "Github"
+        },
+        {
+            "slug": "aws-sns-cfn",
+            "displayName": "Cloudformation"
+        }
+      ],
       "items": {
         "type": "object",
         "required": [
@@ -41,7 +58,7 @@
         ],
         "allowAdditionalProperties": false,
         "properties": {
-            "slug": {
+            "slug": { 
                 "type": "string"
             },
             "displayName": {
@@ -69,11 +86,13 @@
             "type": "boolean",
             "default": false
           },
+          "resourceRepositoryUrl": {
+            "type": "string"
+          },
           "config": {
             "type": "object",
+            "default": {},
             "allowAdditionalProperties": false,
-            "default": {
-            },
             "properties": {
               "allowMessageInherith": {
                   "type": "boolean",
@@ -82,6 +101,10 @@
               "maxHistory": {
                   "type": "integer",
                   "default": 15
+              },
+              "versionTracking": {
+                  "type": "boolean",
+                  "default": false
               }
             }
           }

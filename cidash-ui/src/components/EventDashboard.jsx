@@ -4,6 +4,8 @@ import Group from "./Group";
 import config from "../config.json";
 import {getData} from "../contrib.js";
 import _ from "lodash";
+import Version from "./Version";
+import styles from "./EventDashboard.module.css";
 import {defaultEventData, EventContext, CredentialContext} from "../context";
 
 function EventDashboard(){
@@ -34,6 +36,21 @@ function EventDashboard(){
 
     return (
         <EventContext.Provider value={{eventData, setEventData}} >
+
+            <div className={styles.versionDash}>
+                {
+                    (
+                        () => {
+                            let groupList = [];
+                            return _.map(_.filter(eventData.eventResource, (item) => item.config.versionTracking && item.resourceVersion), function(eventSource) {
+                                return <Version displayName={eventSource.displayName} version={eventSource.resourceVersion} />
+                            })
+                        }
+
+                    )()
+                }
+            </div>
+
             <div>
                 {
                     (
