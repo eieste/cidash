@@ -43,7 +43,7 @@ function EventDashboard(){
                         () => {
                             let groupList = [];
                             return _.map(_.filter(eventData.eventResource, (item) => item.config.versionTracking && item.resourceVersion), function(eventSource) {
-                                return <Version displayName={eventSource.displayName} version={eventSource.resourceVersion} />
+                                return <Version displayName={eventSource.displayName} version={eventSource.resourceVersion} resourceUrl={eventSource.resourceUrl} linkToTag={eventSource.config.versionLinkToTag} />
                             })
                         }
 

@@ -1,11 +1,9 @@
 import React from "react";
 import styles from "./Version.module.css";
 
-function Version({ displayName, version } ) {
+function Version({ displayName, version, versionLinkToTag, resourceUrl } ) {
 
-
-    return <>
-        <a href="https://github.com" className={styles.versionCard}>
+    return <a href={[resourceUrl, ( versionLinkToTag ? "/tree/"+version : "") ].join("")} className={styles.versionCard}>
             <div className={styles.versionTag}>
                 {version}
             </div>
@@ -13,10 +11,7 @@ function Version({ displayName, version } ) {
             <div className={styles.versionPackageName}>
                 {displayName} 
             </div>
-        </a>
-
-    </>;
-
+        </a>;
 }
 
 export default Version;
