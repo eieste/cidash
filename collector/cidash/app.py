@@ -16,6 +16,8 @@ from cidash.contrib.auth import check_hook_auth, check_user_auth
 from cidash.hooks.github import hook_handle_github
 from cidash.hooks.aws import hook_handle_sns_cfn
 
+import urllib.request
+
 log = logging.getLogger(__name__)
 s3 = boto3.client("s3")
 dd = boto3.resource("dynamodb")
@@ -60,13 +62,23 @@ def general_handler(lambda_event, lambda_context):
     if lambda_event.get("resource") == "/hook/{source}":
         source = lambda_event.get("pathParameters", {}).get("source", "")
         check_hook_auth(lambda_event)
+        body = json.loads(lambda_event.get("body")) 
+        if source.startswith("aws-sns"):
+            if body.get("Type") == "SubscriptionConfirmation":
+                try:
+                    url = body.get("SubscribeURL")
+                    urllib.request.urlopen(url)
+                except Exception as e:
+                    log.exception(e)
+
         if source == "aws-sns-cfn":
+
             return wrap_response(
-                hook_handle_sns_cfn(json.loads(lambda_event.get("body")))
+                hook_handle_sns_cfn(body)
             )
         if source == "github":
             return wrap_response(
-                hook_handle_github(json.loads(lambda_event.get("body")))
+                hook_handle_github(body)
             )
 
     if lambda_event.get("resource") == "/data":
