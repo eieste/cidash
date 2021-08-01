@@ -14,7 +14,7 @@ from cidash.contrib.miscellaneous import md5, find_event_config, save_event
 from cidash.contrib.auth import check_hook_auth, check_user_auth
 
 from cidash.hooks.github import hook_handle_github
-from cidash.hooks.aws import hook_handle_sns_cfn
+from cidash.hooks.aws import hook_handle_sns_cfn, extract_cfn_msg
 
 import urllib.request
 
@@ -44,12 +44,9 @@ def general_handler(lambda_event, lambda_context):
         record = lambda_event.get("Records")[0]
 
         if record.get("EventSource") == "aws:sns":
+            cfn_str = record.get("Sns", {}).get("Message", "").strip()
+            cfn_msg = extract_cfn_msg(cfn_msg)
             message = record["Sns"]["Message"].strip()
-            cfn_msg = {
-                k: v.strip("'").strip('"')
-                for k, v in (x.split("=") for x in message.split("\n"))
-            }
-
             if cfn_msg.get("ResourceType") == "AWS::CloudFormation::Stack":
                 log.info("Handle SNS CFN")
                 return wrap_response(hook_handle_sns_cfn(cfn_msg))
@@ -72,9 +69,9 @@ def general_handler(lambda_event, lambda_context):
                     log.exception(e)
 
         if source == "aws-sns-cfn":
-
+            print(body)
             return wrap_response(
-                hook_handle_sns_cfn(body)
+                hook_handle_sns_cfn(extract_cfn_msg(body.get("Message")))
             )
         if source == "github":
             return wrap_response(

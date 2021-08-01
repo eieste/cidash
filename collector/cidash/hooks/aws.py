@@ -1,4 +1,18 @@
 from cidash.contrib.miscellaneous import save_event
+import logging
+import urllib.parse
+
+log = logging.getLogger(__name__)
+
+
+def extract_cfn_msg(msg_str):
+
+    print(x.split("=")[0] for x in msg_str.split('\n'))
+
+    return {
+        k: v.strip("'").strip('"')
+        for k, v in (x.split("=") for x in msg_str.strip('\n').split('\n'))
+    }
 
 def resolve_sns_cfn_state(state):
 
@@ -40,6 +54,7 @@ def resolve_sns_cfn_state(state):
         return "information"
 
 def hook_handle_sns_cfn(cfn_msg):
+
     save_event(
         {
             "eventSourceIdentifier": cfn_msg.get("StackId"),
