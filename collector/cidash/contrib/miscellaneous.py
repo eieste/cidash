@@ -5,9 +5,11 @@ from boto3.dynamodb.conditions import Key
 import os
 import re
 import boto3
+import logging
 from cidash.contrib.settings import get_config, MIN_EQ_VERSION
 
 dd = boto3.resource("dynamodb")
+log = logging.getLogger(__name__)
 
 def md5(data):
     return hashlib.md5(data.encode("utf-8")).hexdigest()
@@ -67,9 +69,9 @@ def save_event(origin_event, event_source):
         origin_event.get("eventSourceIdentifier"), event_source
     )
 
-    print(event_source)
     if not event_config:
-        raise ValidationError("Unknown Event Source")
+        log.debug(origin_event)
+        raise ValidationError("Unknown Event Source {} -- {}".format(event_source, origin_event.get("eventSourceIdentifier")))
 
     event_source_identifier_hash = md5(event_config.get("eventSourceIdentifier"))
     response = table.query(

@@ -41,7 +41,6 @@
   padding: 15px;
   grid-template-columns: 1fr 1fr;
   grid-row-gap: 15px;
-  white-space: nowrap;
 }
 
 .cardSeperator {
