@@ -6,9 +6,6 @@ log = logging.getLogger(__name__)
 
 
 def extract_cfn_msg(msg_str):
-
-    print(x.split("=")[0] for x in msg_str.split('\n'))
-
     return {
         k: v.strip("'").strip('"')
         for k, v in (x.split("=") for x in msg_str.strip('\n').split('\n'))

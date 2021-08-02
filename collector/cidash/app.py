@@ -143,7 +143,7 @@ def validate_event(event, event_source):
         with open(
             os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                "../schemas/event.schema.json",
+                "schemas/event.schema.json",
             ),
             "r",
         ) as fobj:
