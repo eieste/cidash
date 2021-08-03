@@ -1,7 +1,11 @@
 .versionDash {
     display: grid;
-    padding: 20px;
-    grid-column-gap: 15px;
-    grid-row-gap: 15px;
-    grid-template-columns: repeat(auto-fit, 300px);
+    grid-gap: 15px;
+    min-width: 250px;
+    grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+
+}
+
+.wrapper{
+    margin: 20px;
 }

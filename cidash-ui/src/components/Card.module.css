@@ -3,7 +3,7 @@
   height: 180px;
   border-radius: 10px;
   color: white;
-  min-width: 400px;
+  min-width: 300px;
   transition: all .1s ease-in-out;
   display: grid;
   grid-template-columns: 1fr;

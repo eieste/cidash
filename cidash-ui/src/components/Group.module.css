@@ -5,20 +5,17 @@
 }
 
 .groupHeadline {
-    margin: 5px 20px 5px 20px;
+    margin-bottom: 20px;
     border-bottom: 2px solid white;
 }
 
-.groupEvent {
-    margin: 20px;
-
-}
 .groupEventWrapper {
     display: grid;
     grid-column-gap: 15px;
     grid-row-gap: 15px;
     width: 100%;
-    /*grid-template-columns: repeat(4, 1fr);*/
+    /*grid-template-columns: repeat(4, 1fr);*/ 
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); /*
     grid-template-columns: repeat(auto-fit, 400px); /* minmax(400px, 500px));*/
 }
 

@@ -36,37 +36,42 @@ function EventDashboard(){
 
     return (
         <EventContext.Provider value={{eventData, setEventData}} >
+            <div className={styles.wrapper} >
+                <div className={styles.versionDash}>
+                    {
+                        (
+                            () => {
+                                let groupList = [];
+                                return _.map(
+                                    _.sortBy(
+                                        _.filter(eventData.eventResource, (item) => item.config.versionTracking && item.resourceVersion), 
+                                        (item) => { return item.displayName }),
+                                    (eventSource) => {
+                                        return <Version displayName={eventSource.displayName} version={eventSource.resourceVersion} resourceUrl={eventSource.resourceUrl} linkToTag={eventSource.config.versionLinkToTag} />
+                                    })
+                            }
 
-            <div className={styles.versionDash}>
-                {
-                    (
-                        () => {
-                            let groupList = [];
-                            return _.map(_.filter(eventData.eventResource, (item) => item.config.versionTracking && item.resourceVersion), function(eventSource) {
-                                return <Version displayName={eventSource.displayName} version={eventSource.resourceVersion} resourceUrl={eventSource.resourceUrl} linkToTag={eventSource.config.versionLinkToTag} />
-                            })
-                        }
+                        )()
+                    }
+                </div>
 
-                    )()
-                }
-            </div>
+                <div>
+                    {
+                        (
+                            () => {
+                                let groupList = [];
+                                _.forEach(eventData.eventSource, function(eventSource) {
+                                    let groupEvents = _.filter(eventData.eventResource, (item) => { return item.eventSource === eventSource["slug"] });
+                                    groupList.push([ _.filter(groupEvents, (evt) => { return evt.eventHistory.length > 0}).length,  <Group displayName={eventSource.displayName} slug={eventSource.slug} events={groupEvents} /> ]);   
+                                })
+                                console.log(groupList);
+                                return _.map(_.sortBy(groupList, (item) => item[0]), (item) => item[1]).reverse() ;
+                            }
 
-            <div>
-                {
-                    (
-                        () => {
-                            let groupList = [];
-                            _.forEach(eventData.eventSource, function(eventSource) {
-                                let groupEvents = _.filter(eventData.eventResource, (item) => { return item.eventSource === eventSource["slug"] });
-                                groupList.push([ groupEvents.length,  <Group displayName={eventSource.displayName} slug={eventSource.slug} events={groupEvents} /> ]);   
-                            })
-                            return _.map(_.sortBy(groupList, (item) => item[0]), (item) => item[1]).reverse() ;
-                        }
+                        )()
+                    }
 
-                    )()
-                }
-
-
+                </div>
             </div>
         </EventContext.Provider>
   );
