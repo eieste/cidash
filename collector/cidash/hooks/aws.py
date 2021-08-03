@@ -15,7 +15,6 @@ def resolve_sns_cfn_state(state):
 
     if state.lower() in [
         "create_complete",
-        "delete_complete",
         "update_complete",
         "update_complete_cleanup_in_progress",
         "import_complete",
@@ -45,6 +44,7 @@ def resolve_sns_cfn_state(state):
         "update_failed",
         "update_rollback_failed",
         "import_rollback_failed",
+        "delete_complete",
     ]:
         return "error"
     elif state.lower() in ["review_in_progress"]:
