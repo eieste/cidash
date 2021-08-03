@@ -88,9 +88,9 @@ function Card({ simpleState, complexState, complexMessage, displayName, eventSou
                     <div>
                         {timestamp.toLocaleString()}
                     </div>
-                    <div>
-                        { eventSourceUrl ? <a target="_blank" href={eventSourceUrl}>Resource </a> : ""}
-
+                    <div className={styles.cardBottomLink}>
+                        { eventSourceUrl ? <a target="_blank" href={eventSourceUrl}>Resource </a>: ""}
+                        { eventSourceUrl && eventHistory.length >0 ? "  |  " : ""}
                         { eventHistory.length > 0 ? <span className={styles.link} onClick={openModal}>History</span> : ""}
                     </div>
                 </div>
